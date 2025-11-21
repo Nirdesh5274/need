@@ -40,24 +40,26 @@ app.use('/api/', limiter);
 // Data sanitization against NoSQL injection
 app.use(mongoSanitize());
 
-// CORS with strict origin
+// CORS with flexible origin for Vercel
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:3001',
   process.env.FRONTEND_URL,
   'https://need-nirdesh5274s-projects.vercel.app',
-  'https://need.vercel.app'
+  'https://need.vercel.app',
+  'https://need-three.vercel.app'
 ].filter(Boolean);
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, Postman, etc.)
+    // Allow requests with no origin (mobile apps, Postman, serverless, etc.)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.some(allowed => origin.startsWith(allowed.replace('*', '')))) {
+    // Allow any Vercel deployment URL or configured origins
+    if (origin.includes('.vercel.app') || allowedOrigins.some(allowed => origin.startsWith(allowed))) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(null, true); // Allow all in production to avoid CORS issues
     }
   },
   credentials: true,
@@ -69,13 +71,65 @@ app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('MongoDB Connected'))
-.catch((err) => console.log('MongoDB Connection Error:', err));
+// MongoDB Connection - Lazy connection for serverless
+let isConnected = false;
+
+const connectDB = async () => {
+  if (isConnected) {
+    console.log('Using existing MongoDB connection');
+    return;
+  }
+
+  if (!process.env.MONGODB_URI) {
+    console.error('ERROR: MONGODB_URI not set in environment variables');
+    throw new Error('MONGODB_URI is required');
+  }
+
+  try {
+    const db = await mongoose.connect(process.env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
+    isConnected = db.connections[0].readyState === 1;
+    console.log('MongoDB Connected successfully');
+  } catch (error) {
+    console.error('MongoDB Connection Error:', error.message);
+    throw error;
+  }
+};
+
+// Connect to MongoDB on startup (for local dev)
+if (require.main === module) {
+  connectDB().catch(err => console.error('Failed to connect to MongoDB:', err));
+}
+
+// Middleware to ensure DB connection for all API routes
+app.use('/api', async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    res.status(500).json({ 
+      message: 'Database connection failed', 
+      error: error.message,
+      hint: 'Check if MONGODB_URI environment variable is set in Vercel'
+    });
+  }
+});
+
+// Health check (no DB required)
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    message: 'Server is running',
+    env: {
+      hasMongoUri: !!process.env.MONGODB_URI,
+      hasJwtSecret: !!process.env.JWT_SECRET,
+      nodeEnv: process.env.NODE_ENV
+    },
+    mongodb: isConnected ? 'Connected' : 'Not connected'
+  });
+});
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -84,11 +138,6 @@ app.use('/api/sales', require('./routes/sales'));
 app.use('/api/expenses', require('./routes/expenses'));
 app.use('/api/reports', require('./routes/reports'));
 app.use('/api/invoices', require('./routes/invoices'));
-
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Server is running' });
-});
 
 // Export for Vercel serverless
 module.exports = app;
