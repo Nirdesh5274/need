@@ -13,22 +13,23 @@ const loginLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Admin credentials from environment variables
+// Admin credentials from environment variables with fallbacks
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@factory.com';
 const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || '$2a$10$EScRNOfKNDaRzJ7.gzGOsewsTekkpJz2i6iqRZ.9Sz4vU0l/3VYlK';
 const ADMIN_USERNAME = 'Admin';
 const ADMIN_ID = 'admin_' + require('crypto').createHash('sha256').update(ADMIN_EMAIL).digest('hex').substring(0, 16);
 
-// Validate critical environment variables
-if (!process.env.JWT_SECRET) {
-  console.warn('WARNING: JWT_SECRET not set in environment variables. Using default (INSECURE).');
-}
-
+// JWT Secret with fallback
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key-change-in-production-please';
 
-if (!ADMIN_PASSWORD_HASH) {
-  console.error('ERROR: ADMIN_PASSWORD_HASH not set in environment variables');
-}
+// Debug logging (remove in production)
+console.log('=== AUTH CONFIGURATION ===');
+console.log('ADMIN_EMAIL:', ADMIN_EMAIL);
+console.log('ADMIN_PASSWORD_HASH exists:', !!ADMIN_PASSWORD_HASH);
+console.log('ADMIN_PASSWORD_HASH length:', ADMIN_PASSWORD_HASH?.length);
+console.log('JWT_SECRET exists:', !!JWT_SECRET);
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('==========================')
 
 // Failed login attempts tracking
 const failedAttempts = new Map();
@@ -72,13 +73,20 @@ router.post('/login', loginLimiter, async (req, res) => {
     const { email, password } = req.body;
     const clientIp = req.ip || req.connection.remoteAddress;
 
+    console.log('=== LOGIN ATTEMPT ===');
+    console.log('Email received:', email);
+    console.log('Password length:', password?.length);
+    console.log('Client IP:', clientIp);
+
     // Input validation
     if (!email || !password) {
+      console.log('Missing email or password');
       return res.status(400).json({ message: 'Email and password are required' });
     }
 
     // Check if IP is locked out
     if (isLockedOut(clientIp)) {
+      console.log('IP locked out:', clientIp);
       return res.status(429).json({ 
         message: 'Account temporarily locked due to multiple failed attempts. Please try again later.' 
       });
@@ -86,20 +94,28 @@ router.post('/login', loginLimiter, async (req, res) => {
 
     // Constant-time email comparison to prevent timing attacks
     const emailMatch = email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+    console.log('Email match:', emailMatch);
     
     // Verify password using bcrypt
     let passwordMatch = false;
-    if (ADMIN_PASSWORD_HASH) {
+    try {
       passwordMatch = await bcrypt.compare(password, ADMIN_PASSWORD_HASH);
+      console.log('Password match:', passwordMatch);
+    } catch (bcryptError) {
+      console.error('Bcrypt error:', bcryptError);
+      passwordMatch = false;
     }
 
     // Check credentials
     if (!emailMatch || !passwordMatch) {
       recordFailedAttempt(clientIp);
+      console.log('Login failed - Invalid credentials');
       
       // Generic error message to prevent user enumeration
       return res.status(401).json({ message: 'Invalid credentials' });
     }
+
+    console.log('Login successful!');
 
     // Clear failed attempts on successful login
     clearFailedAttempts(clientIp);
@@ -146,6 +162,20 @@ router.post('/login', loginLimiter, async (req, res) => {
 router.post('/logout', (req, res) => {
   res.clearCookie('token');
   res.json({ message: 'Logged out successfully' });
+});
+
+// Test endpoint to verify auth configuration
+router.get('/test', (req, res) => {
+  res.json({
+    message: 'Auth endpoint is working',
+    config: {
+      adminEmail: ADMIN_EMAIL,
+      hasPasswordHash: !!ADMIN_PASSWORD_HASH,
+      passwordHashLength: ADMIN_PASSWORD_HASH?.length,
+      hasJwtSecret: !!JWT_SECRET,
+      nodeEnv: process.env.NODE_ENV
+    }
+  });
 });
 
 module.exports = router;
