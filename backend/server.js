@@ -41,10 +41,25 @@ app.use('/api/', limiter);
 app.use(mongoSanitize());
 
 // CORS with strict origin
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  process.env.FRONTEND_URL,
+  'https://need-nirdesh5274s-projects.vercel.app',
+  'https://need.vercel.app'
+].filter(Boolean);
+
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? process.env.FRONTEND_URL 
-    : ['http://localhost:3000', 'http://localhost:3001'],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.some(allowed => origin.startsWith(allowed.replace('*', '')))) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   optionsSuccessStatus: 200
 };

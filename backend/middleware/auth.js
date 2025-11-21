@@ -1,5 +1,8 @@
 const jwt = require('jsonwebtoken');
 
+// Use same JWT_SECRET with fallback as auth route
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key-change-in-production-please';
+
 const authMiddleware = async (req, res, next) => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -8,7 +11,7 @@ const authMiddleware = async (req, res, next) => {
       return res.status(401).json({ message: 'No authentication token, access denied' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.userId = decoded.userId;
     next();
   } catch (error) {

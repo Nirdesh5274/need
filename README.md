@@ -13,34 +13,67 @@ A modern, secure factory management system built with MERN stack. Clean, simple,
 
 ## 🚀 Quick Deploy to Vercel
 
-### One-Click Deploy (Recommended)
+### ⚡ Monorepo Setup (Recommended)
 
-1. **Fork this repository**
-2. **Go to [Vercel](https://vercel.com)** and import your fork
-3. **Deploy Backend:**
-   - Root Directory: `backend`
-   - Add Environment Variables:
-     ```
-     MONGODB_URI=your_mongodb_atlas_connection_string
-     JWT_SECRET=your_random_secret_key_minimum_32_characters
-     ADMIN_PASSWORD_HASH=your_bcrypt_hashed_password
-     PORT=5000
-     ```
-   - Click Deploy
+This project uses a monorepo setup for single Vercel deployment.
 
-4. **Deploy Frontend:**
-   - Root Directory: `frontend`
-   - Add Environment Variables:
-     ```
-     VITE_API_URL=https://your-backend-url.vercel.app/api
-     ```
-   - Click Deploy
+#### Step 1: Import to Vercel
+1. Go to [Vercel](https://vercel.com) and import this repository
+2. Vercel will automatically detect the configuration from `vercel.json`
 
-5. **Done!** 🎉
+#### Step 2: Add Environment Variables in Vercel Dashboard
+
+**CRITICAL:** Go to **Settings > Environment Variables** and add these:
+
+```bash
+MONGODB_URI=mongodb+srv://NirdeshK_db_user:JShZZhVSd4o4Hebd@cluster0.f1wm6hw.mongodb.net/?appName=Cluster0
+JWT_SECRET=factory-management-super-secret-jwt-key-2024-vercel-deployment
+ADMIN_EMAIL=admin@factory.com
+ADMIN_PASSWORD_HASH=$2a$10$EScRNOfKNDaRzJ7.gzGOsewsTekkpJz2i6iqRZ.9Sz4vU0l/3VYlK
+NODE_ENV=production
+```
+
+**Important Notes:**
+- Make sure to set **all variables** for Production environment
+- The `ADMIN_PASSWORD_HASH` is for password: `Admin@123!Factory`
+- Copy values from `.vercel.env.txt` file in the root directory
+
+#### Step 3: Deploy
+Click **Deploy** and wait for the build to complete (2-3 minutes)
+
+#### Step 4: Test Login
+- Open your Vercel deployment URL
+- Login with:
+  - **Email:** `admin@factory.com`
+  - **Password:** `Admin@123!Factory`
+
+### 🔧 Troubleshooting Login Issues
+
+If login fails after deployment:
+
+1. **Check Environment Variables:**
+   - Go to Vercel Dashboard > Your Project > Settings > Environment Variables
+   - Verify all 5 variables are set (MONGODB_URI, JWT_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD_HASH, NODE_ENV)
+   - Click "Redeploy" after adding variables
+
+2. **Check MongoDB Connection:**
+   - Ensure MongoDB Atlas allows connections from anywhere (0.0.0.0/0)
+   - Verify the connection string is correct
+
+3. **Check Browser Console:**
+   - Open Developer Tools (F12)
+   - Look for CORS errors or network failures
+   - Check if API requests are going to `/api/...`
+
+4. **Force Redeploy:**
+   ```bash
+   git commit --allow-empty -m "Trigger redeploy"
+   git push origin main
+   ```
 
 ### Login Credentials
-- Email: `admin@factory.com`
-- Password: `Admin@123!Factory` 
+- **Email:** `admin@factory.com`
+- **Password:** `Admin@123!Factory` 
 
 ## Tech Stack
 

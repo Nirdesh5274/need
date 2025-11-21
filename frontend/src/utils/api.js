@@ -1,12 +1,29 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+// Automatically detect API URL based on environment
+const getApiUrl = () => {
+  // If VITE_API_URL is explicitly set, use it
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  
+  // In production (Vercel), use relative path which Vercel will route to serverless functions
+  if (import.meta.env.PROD) {
+    return '/api';
+  }
+  
+  // In development, use localhost backend
+  return 'http://localhost:5000/api';
+};
+
+const API_URL = getApiUrl();
 
 const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 // Add token to requests

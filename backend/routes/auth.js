@@ -15,9 +15,20 @@ const loginLimiter = rateLimit({
 
 // Admin credentials from environment variables
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@factory.com';
-const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH;
+const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || '$2a$10$EScRNOfKNDaRzJ7.gzGOsewsTekkpJz2i6iqRZ.9Sz4vU0l/3VYlK';
 const ADMIN_USERNAME = 'Admin';
 const ADMIN_ID = 'admin_' + require('crypto').createHash('sha256').update(ADMIN_EMAIL).digest('hex').substring(0, 16);
+
+// Validate critical environment variables
+if (!process.env.JWT_SECRET) {
+  console.warn('WARNING: JWT_SECRET not set in environment variables. Using default (INSECURE).');
+}
+
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key-change-in-production-please';
+
+if (!ADMIN_PASSWORD_HASH) {
+  console.error('ERROR: ADMIN_PASSWORD_HASH not set in environment variables');
+}
 
 // Failed login attempts tracking
 const failedAttempts = new Map();
@@ -101,7 +112,7 @@ router.post('/login', loginLimiter, async (req, res) => {
         role: 'owner',
         iat: Math.floor(Date.now() / 1000)
       }, 
-      process.env.JWT_SECRET, 
+      JWT_SECRET, 
       { 
         expiresIn: '8h', // Shorter session for security
         algorithm: 'HS256'
