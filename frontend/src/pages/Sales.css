@@ -1,0 +1,315 @@
+.sales {
+  padding: 30px;
+  background: #f3f4f6;
+  min-height: calc(100vh - 70px);
+}
+
+.page-header {
+  background: white;
+  padding: 24px 28px;
+  border-radius: 12px;
+  margin-bottom: 28px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-header h1 {
+  font-size: 26px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+.amount {
+  font-weight: 600;
+  color: #7c3aed;
+  font-size: 15px;
+}
+
+.badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #e9d5ff 0%, #ddd6fe 100%);
+  color: #6b21a8;
+  text-transform: capitalize;
+  border: 1px solid #ddd6fe;
+}
+
+.badge.paid {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+
+.badge.partial {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  border-color: #fde68a;
+}
+
+.badge.pending {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+.modal.large {
+  max-width: 800px;
+}
+
+.products-section {
+  margin: 20px 0;
+  padding: 20px;
+  background: linear-gradient(135deg, #faf5ff 0%, #fef3f2 100%);
+  border-radius: 12px;
+  border: 1px solid #e9d5ff;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.section-header h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #7c3aed;
+}
+
+.btn-small {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.2);
+}
+
+.btn-small:hover {
+  background: linear-gradient(135deg, #047857 0%, #059669 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+.product-row {
+  display: grid;
+  grid-template-columns: 2.5fr 1.2fr 1fr 1fr auto;
+  gap: 12px;
+  margin-bottom: 12px;
+  align-items: start;
+  padding: 16px;
+  background: white;
+  border-radius: 10px;
+  border: 2px solid #f3f4f6;
+  transition: all 0.2s ease;
+}
+
+.product-row:hover {
+  border-color: #c4b5fd;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.08);
+}
+
+.product-select-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.product-select-wrapper select {
+  width: 100%;
+}
+
+.product-select-wrapper small {
+  font-size: 12px;
+  color: #6b7280;
+  padding-left: 4px;
+}
+
+.quantity-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.quantity-input-wrapper input {
+  width: 100%;
+  padding-right: 45px;
+}
+
+.unit-badge {
+  position: absolute;
+  right: 10px;
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.product-row select,
+.product-row input {
+  padding: 11px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.product-row select:focus,
+.product-row input:focus {
+  outline: none;
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+.item-total {
+  font-weight: 600;
+  color: #1e293b;
+  text-align: right;
+  min-width: 80px;
+}
+
+.btn-remove {
+  padding: 8px;
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.payment-summary {
+  background: linear-gradient(135deg, #faf5ff 0%, #ffffff 100%);
+  border-radius: 12px;
+  padding: 24px;
+  margin: 24px 0;
+  border: 2px solid #e9d5ff;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  font-size: 15px;
+}
+
+.summary-row:not(:last-child) {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.summary-row span {
+  color: #374151;
+}
+
+.amount-value {
+  font-weight: 600;
+  color: #059669;
+  font-size: 16px;
+}
+
+.total-row {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  margin: 10px -24px;
+  padding: 18px 24px !important;
+  border-radius: 10px;
+  border: none !important;
+}
+
+.total-row span {
+  font-size: 18px;
+  font-weight: 700;
+  color: #065f46;
+}
+
+.total-value {
+  color: #065f46 !important;
+  font-size: 20px !important;
+}
+
+.due-row {
+  background: #fef2f2;
+  margin: 8px -20px 0;
+  padding: 12px 20px !important;
+  border-radius: 8px;
+}
+
+.due-value {
+  color: #dc2626 !important;
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.discount-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.discount-input input {
+  width: 200px;
+  padding: 8px 12px 8px 32px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.currency-symbol {
+  position: absolute;
+  left: 12px;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.payment-status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.payment-status-badge.paid {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.payment-status-badge.partial {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.payment-status-badge.pending {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+select {
+  padding: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
