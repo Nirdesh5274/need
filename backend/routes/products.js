@@ -203,18 +203,21 @@ router.post('/', authMiddleware, async (req, res) => {
   try {
     const product = new Product({
       ...req.body,
-      createdBy: req.userId,
-      updatedBy: req.userId
+      createdBy: req.userId || 'admin123',
+      updatedBy: req.userId || 'admin123'
     });
 
     await product.save();
     res.status(201).json(product);
   } catch (error) {
-    console.error(error);
+    console.error('Product creation error:', error);
     if (error.code === 11000) {
       return res.status(400).json({ message: 'SKU or Barcode already exists' });
     }
-    res.status(500).json({ message: 'Server error' });
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: error.message, errors: error.errors });
+    }
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 

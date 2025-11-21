@@ -294,7 +294,7 @@ router.post('/', authMiddleware, async (req, res) => {
       customerContact: customerContact || customer?.phone || '',
       notes: notes || '',
       saleDate: saleDate || Date.now(),
-      createdBy: req.userId
+      createdBy: req.userId || 'admin123'
     });
 
     await sale.save();

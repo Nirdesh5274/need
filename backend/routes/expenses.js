@@ -252,7 +252,7 @@ router.post('/', authMiddleware, async (req, res) => {
   try {
     const expense = new Expense({
       ...req.body,
-      createdBy: req.userId
+      createdBy: req.userId || 'admin123'
     });
 
     await expense.save();
