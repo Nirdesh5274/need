@@ -21,9 +21,9 @@ A modern, secure factory management system built with MERN stack. Clean, simple,
    - Root Directory: `backend`
    - Add Environment Variables:
      ```
-     MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/factory
-     JWT_SECRET=your-random-secret-key-min-32-chars
-     ADMIN_PASSWORD_HASH=$2a$10$EScRNOfKNDaRzJ7.gzGOsewsTekkpJz2i6iqRZ.9Sz4vU0l/3VYlK
+     MONGODB_URI=your_mongodb_atlas_connection_string
+     JWT_SECRET=your_random_secret_key_minimum_32_characters
+     ADMIN_PASSWORD_HASH=your_bcrypt_hashed_password
      PORT=5000
      ```
    - Click Deploy
@@ -40,7 +40,7 @@ A modern, secure factory management system built with MERN stack. Clean, simple,
 
 ### Login Credentials
 - Email: `admin@factory.com`
-- Password: `Admin@123!Factory`
+- Password: `Admin@123!Factory` 
 
 ## Tech Stack
 
