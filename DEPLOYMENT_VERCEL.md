@@ -32,10 +32,10 @@ vercel --prod
 ```
 
 3. During deployment, add these environment variables:
-- `MONGODB_URI`: mongodb+srv://NirdeshK_db_user:wsF2DK6KgrfraDEa@cluster0.f1wm6hw.mongodb.net/?appName=Cluster0
-- `JWT_SECRET`: a3f8d9e2b7c4f1a8e5d2c9b6f3a0e7d4c1b8f5e2d9c6a3f0e7d4b1c8f5a2e9d6
-- `ADMIN_EMAIL`: admin@factory.com
-- `ADMIN_PASSWORD_HASH`: $2a$10$EScRNOfKNDaRzJ7.gzGOsewsTekkpJz2i6iqRZ.9Sz4vU0l/3VYlK
+- `MONGODB_URI`: Your MongoDB Atlas connection string
+- `JWT_SECRET`: Generate using: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+- `ADMIN_EMAIL`: Your admin email
+- `ADMIN_PASSWORD_HASH`: Generate using bcrypt (see backend/.env.example)
 - `PORT`: 5000
 - `NODE_ENV`: production
 
@@ -72,10 +72,10 @@ Go to Project Settings → Environment Variables and add:
 
 **Backend:**
 ```
-MONGODB_URI=mongodb+srv://NirdeshK_db_user:wsF2DK6KgrfraDEa@cluster0.f1wm6hw.mongodb.net/?appName=Cluster0
-JWT_SECRET=a3f8d9e2b7c4f1a8e5d2c9b6f3a0e7d4c1b8f5e2d9c6a3f0e7d4b1c8f5a2e9d6
+MONGODB_URI=your_mongodb_connection_string_here
+JWT_SECRET=your_generated_jwt_secret_here
 ADMIN_EMAIL=admin@factory.com
-ADMIN_PASSWORD_HASH=$2a$10$EScRNOfKNDaRzJ7.gzGOsewsTekkpJz2i6iqRZ.9Sz4vU0l/3VYlK
+ADMIN_PASSWORD_HASH=your_bcrypt_password_hash_here
 NODE_ENV=production
 PORT=5000
 ```
