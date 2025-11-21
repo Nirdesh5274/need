@@ -3,7 +3,7 @@ const router = express.Router();
 const authMiddleware = require('../middleware/auth');
 const Product = require('../models/Product');
 
-// Get all products with advanced filtering, pagination, and search
+// Get all products
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const {
@@ -13,42 +13,21 @@ router.get('/', authMiddleware, async (req, res) => {
       category,
       stockStatus,
       sortBy = 'name',
-      sortOrder = 'asc',
-      minPrice,
-      maxPrice
+      sortOrder = 'asc'
     } = req.query;
 
-    const query = { isActive: true };
+    const query = {};
 
-    // Full-text search across multiple fields
     if (search) {
-      query.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
-        { sku: { $regex: search, $options: 'i' } },
-        { barcode: { $regex: search, $options: 'i' } },
-        { tags: { $in: [new RegExp(search, 'i')] } }
-      ];
+      query.name = { $regex: search, $options: 'i' };
     }
 
     if (category) query.category = category;
-    
-    if (minPrice || maxPrice) {
-      query.price = {};
-      if (minPrice) query.price.$gte = parseFloat(minPrice);
-      if (maxPrice) query.price.$lte = parseFloat(maxPrice);
-    }
 
-    // Advanced stock status filtering
     if (stockStatus === 'low_stock') {
       query.$expr = { $lte: ['$quantity', '$lowStockThreshold'] };
     } else if (stockStatus === 'out_of_stock') {
       query.quantity = 0;
-    } else if (stockStatus === 'in_stock') {
-      query.quantity = { $gt: 0 };
-      query.$expr = { $gt: ['$quantity', '$lowStockThreshold'] };
-    } else if (stockStatus === 'reorder') {
-      query.$expr = { $lte: ['$quantity', '$reorderLevel'] };
     }
 
     const sort = {};
@@ -203,19 +182,15 @@ router.post('/', authMiddleware, async (req, res) => {
   try {
     const product = new Product({
       ...req.body,
-      createdBy: req.userId || 'admin123',
-      updatedBy: req.userId || 'admin123'
+      createdBy: 'admin'
     });
 
     await product.save();
     res.status(201).json(product);
   } catch (error) {
     console.error('Product creation error:', error);
-    if (error.code === 11000) {
-      return res.status(400).json({ message: 'SKU or Barcode already exists' });
-    }
     if (error.name === 'ValidationError') {
-      return res.status(400).json({ message: error.message, errors: error.errors });
+      return res.status(400).json({ message: error.message });
     }
     res.status(500).json({ message: 'Server error', error: error.message });
   }
@@ -226,11 +201,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
   try {
     const product = await Product.findByIdAndUpdate(
       req.params.id,
-      {
-        ...req.body,
-        updatedBy: req.userId,
-        updatedAt: Date.now()
-      },
+      { ...req.body },
       { new: true, runValidators: true }
     );
 
@@ -241,9 +212,6 @@ router.put('/:id', authMiddleware, async (req, res) => {
     res.json(product);
   } catch (error) {
     console.error(error);
-    if (error.code === 11000) {
-      return res.status(400).json({ message: 'SKU or Barcode already exists' });
-    }
     res.status(500).json({ message: 'Server error' });
   }
 });

@@ -292,9 +292,8 @@ router.post('/', authMiddleware, async (req, res) => {
       }] : [],
       customerName: customerName || customer?.name || '',
       customerContact: customerContact || customer?.phone || '',
-      notes: notes || '',
       saleDate: saleDate || Date.now(),
-      createdBy: req.userId || 'admin123'
+      createdBy: 'admin'
     });
 
     await sale.save();

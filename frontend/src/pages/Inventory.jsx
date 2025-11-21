@@ -101,11 +101,9 @@ const Inventory = () => {
       name: '',
       category: '',
       quantity: 0,
-      unit: 'pcs',
+      unit: 'kg',
       price: 0,
-      costPrice: 0,
-      lowStockThreshold: 10,
-      sku: ''
+      lowStockThreshold: 10
     });
     setEditingId(null);
     setShowModal(false);

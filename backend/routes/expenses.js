@@ -252,7 +252,7 @@ router.post('/', authMiddleware, async (req, res) => {
   try {
     const expense = new Expense({
       ...req.body,
-      createdBy: req.userId || 'admin123'
+      createdBy: 'admin'
     });
 
     await expense.save();
@@ -297,7 +297,7 @@ router.post('/recurring/create', authMiddleware, async (req, res) => {
         endDate,
         isActive: true
       },
-      createdBy: req.userId
+      createdBy: 'admin'
     });
 
     await expense.save();
