@@ -98,26 +98,12 @@ const connectDB = async () => {
   }
 };
 
-// Connect to MongoDB on startup (for local dev)
+// Connect to MongoDB on startup (for local dev only)
 if (require.main === module) {
   connectDB().catch(err => console.error('Failed to connect to MongoDB:', err));
 }
 
-// Middleware to ensure DB connection for all API routes
-app.use('/api', async (req, res, next) => {
-  try {
-    await connectDB();
-    next();
-  } catch (error) {
-    res.status(500).json({ 
-      message: 'Database connection failed', 
-      error: error.message,
-      hint: 'Check if MONGODB_URI environment variable is set in Vercel'
-    });
-  }
-});
-
-// Health check (no DB required)
+// Health check endpoint (no DB required)
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
@@ -131,13 +117,28 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/products', require('./routes/products'));
-app.use('/api/sales', require('./routes/sales'));
-app.use('/api/expenses', require('./routes/expenses'));
-app.use('/api/reports', require('./routes/reports'));
-app.use('/api/invoices', require('./routes/invoices'));
+// DB connection middleware for other routes
+const dbMiddleware = async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error('DB connection error:', error);
+    res.status(500).json({ 
+      message: 'Database connection failed', 
+      error: error.message,
+      hint: 'Check if MONGODB_URI environment variable is set in Vercel'
+    });
+  }
+};
+
+// Routes with DB middleware
+app.use('/api/auth', dbMiddleware, require('./routes/auth'));
+app.use('/api/products', dbMiddleware, require('./routes/products'));
+app.use('/api/sales', dbMiddleware, require('./routes/sales'));
+app.use('/api/expenses', dbMiddleware, require('./routes/expenses'));
+app.use('/api/reports', dbMiddleware, require('./routes/reports'));
+app.use('/api/invoices', dbMiddleware, require('./routes/invoices'));
 
 // Export for Vercel serverless
 module.exports = app;
