@@ -265,7 +265,6 @@ function generateInvoiceHTML(sale) {
             <tr>
               <th>#</th>
               <th>Product</th>
-              <th>SKU</th>
               <th class="text-right">Quantity</th>
               <th class="text-right">Unit Price (₹)</th>
               <th class="text-right">Total (₹)</th>
@@ -276,7 +275,6 @@ function generateInvoiceHTML(sale) {
               <tr>
                 <td>${index + 1}</td>
                 <td>${item.product?.name || 'Product'}</td>
-                <td>${item.product?.sku || '-'}</td>
                 <td class="text-right">${formatQuantity(item.quantity, item.product?.unit || 'pcs')}</td>
                 <td class="text-right">${formatCurrency(item.price)}</td>
                 <td class="text-right">${formatCurrency(item.total)}</td>

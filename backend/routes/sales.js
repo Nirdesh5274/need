@@ -248,15 +248,6 @@ router.post('/', authMiddleware, async (req, res) => {
 
       // Update product quantity
       product.quantity -= item.quantity;
-      if (product.stockHistory) {
-        product.stockHistory.push({
-          date: new Date(),
-          quantity: -item.quantity,
-          type: 'out',
-          reference: 'Sale',
-          notes: `Sold ${item.quantity} units`
-        });
-      }
       await product.save();
     }
 
@@ -397,13 +388,6 @@ router.delete('/:id', authMiddleware, async (req, res) => {
       const product = await Product.findById(item.product);
       if (product) {
         product.quantity += item.quantity;
-        product.stockHistory.push({
-          date: new Date(),
-          quantity: item.quantity,
-          type: 'in',
-          reference: 'Sale Cancellation',
-          notes: `Restored ${item.quantity} units from cancelled sale`
-        });
         await product.save();
       }
     }

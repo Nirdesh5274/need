@@ -59,31 +59,13 @@ router.get('/', authMiddleware, async (req, res) => {
 router.get('/statistics', authMiddleware, async (req, res) => {
   try {
     const stats = await Product.aggregate([
-      { $match: { isActive: true } },
+      { $match: {} },
       {
         $group: {
           _id: null,
           totalProducts: { $sum: 1 },
-          totalInventoryValue: { $sum: { $multiply: ['$quantity', '$costPrice'] } },
+          totalInventoryValue: { $sum: { $multiply: ['$quantity', '$price'] } },
           totalRetailValue: { $sum: { $multiply: ['$quantity', '$price'] } },
-          potentialProfit: {
-            $sum: {
-              $multiply: ['$quantity', { $subtract: ['$price', '$costPrice'] }]
-            }
-          },
-          avgMargin: {
-            $avg: {
-              $multiply: [
-                {
-                  $divide: [
-                    { $subtract: ['$price', '$costPrice'] },
-                    '$costPrice'
-                  ]
-                },
-                100
-              ]
-            }
-          },
           lowStockCount: {
             $sum: { $cond: [{ $lte: ['$quantity', '$lowStockThreshold'] }, 1, 0] }
           },
@@ -95,22 +77,22 @@ router.get('/statistics', authMiddleware, async (req, res) => {
     ]);
 
     const categoryStats = await Product.aggregate([
-      { $match: { isActive: true } },
+      { $match: {} },
       {
         $group: {
           _id: '$category',
           count: { $sum: 1 },
-          totalValue: { $sum: { $multiply: ['$quantity', '$costPrice'] } },
+          totalValue: { $sum: { $multiply: ['$quantity', '$price'] } },
           avgPrice: { $avg: '$price' }
         }
       },
       { $sort: { totalValue: -1 } }
     ]);
 
-    const topProducts = await Product.find({ isActive: true })
+    const topProducts = await Product.find({})
       .sort({ quantity: -1 })
       .limit(10)
-      .select('name quantity price costPrice');
+      .select('name quantity price');
 
     res.json({
       overall: stats[0] || {},
@@ -127,7 +109,6 @@ router.get('/statistics', authMiddleware, async (req, res) => {
 router.get('/alerts/low-stock', authMiddleware, async (req, res) => {
   try {
     const products = await Product.find({
-      isActive: true,
       $expr: { $lte: ['$quantity', '$lowStockThreshold'] }
     }).sort({ quantity: 1 });
 
@@ -141,7 +122,7 @@ router.get('/alerts/low-stock', authMiddleware, async (req, res) => {
 // Get all unique categories
 router.get('/data/categories', authMiddleware, async (req, res) => {
   try {
-    const categories = await Product.distinct('category', { isActive: true });
+    const categories = await Product.distinct('category');
     res.json(categories);
   } catch (error) {
     console.error(error);
@@ -152,8 +133,8 @@ router.get('/data/categories', authMiddleware, async (req, res) => {
 // Export products data for reporting
 router.get('/export/all', authMiddleware, async (req, res) => {
   try {
-    const products = await Product.find({ isActive: true })
-      .select('name sku category quantity price costPrice lowStockThreshold barcode unit')
+    const products = await Product.find({})
+      .select('name category quantity price lowStockThreshold unit')
       .sort({ name: 1 });
 
     res.json(products);
@@ -233,16 +214,6 @@ router.post('/:id/adjust-stock', authMiddleware, async (req, res) => {
       return res.status(400).json({ message: 'Insufficient stock' });
     }
 
-    // Add to stock history
-    product.stockHistory.push({
-      date: new Date(),
-      quantity: adjustment,
-      type: type || (adjustment > 0 ? 'in' : 'out'),
-      reference: `Manual adjustment by user`,
-      notes: notes || reason
-    });
-
-    product.updatedBy = req.userId;
     await product.save();
 
     res.json({
@@ -261,11 +232,7 @@ router.post('/:id/adjust-stock', authMiddleware, async (req, res) => {
 // Delete product (soft delete)
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
-    const product = await Product.findByIdAndUpdate(
-      req.params.id,
-      { isActive: false, updatedBy: req.userId },
-      { new: true }
-    );
+    const product = await Product.findByIdAndDelete(req.params.id);
 
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
@@ -293,7 +260,6 @@ router.post('/bulk/update-prices', authMiddleware, async (req, res) => {
       } else if (type === 'set') {
         product.price = priceChange;
       }
-      product.updatedBy = req.userId;
       await product.save();
     }
 
