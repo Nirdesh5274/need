@@ -29,7 +29,8 @@ const ProductSchema = new mongoose.Schema({
   },
   costPrice: {
     type: Number,
-    required: true,
+    required: false,
+    default: 0,
     min: 0
   },
   sku: {
@@ -97,13 +98,12 @@ const ProductSchema = new mongoose.Schema({
     warranty: String
   },
   createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    type: String,
+    required: true,
+    default: 'admin'
   },
   updatedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    type: String
   },
   createdAt: {
     type: Date,

@@ -39,9 +39,7 @@ const ExpenseSchema = new mongoose.Schema({
     enum: ['pending', 'paid', 'overdue', 'cancelled'],
     default: 'paid'
   },
-  vendor: {
-    type: mongoose.Schema.Types.Mixed
-  },
+  vendor: String,
   vendorName: String,
   invoiceNumber: String,
   purchaseOrderNumber: String,
@@ -80,10 +78,7 @@ const ExpenseSchema = new mongoose.Schema({
     type: String,
     enum: ['pending', 'approved', 'rejected', 'paid']
   },
-  approvedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  },
+  approvedBy: String,
   approvedAt: Date,
   project: {
     type: String
@@ -109,13 +104,12 @@ const ExpenseSchema = new mongoose.Schema({
     index: true
   },
   createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    type: String,
+    required: true,
+    default: 'admin'
   },
   updatedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    type: String
   },
   createdAt: {
     type: Date,

@@ -101,9 +101,11 @@ const Inventory = () => {
       name: '',
       category: '',
       quantity: 0,
-      unit: 'kg',
+      unit: 'pcs',
       price: 0,
-      lowStockThreshold: 10
+      costPrice: 0,
+      lowStockThreshold: 10,
+      sku: ''
     });
     setEditingId(null);
     setShowModal(false);
@@ -291,24 +293,26 @@ const Inventory = () => {
                   </select>
                 </div>
               </div>
-              <div className="form-group">
-                <label>Price *</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  required
-                  value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: parseNumber(e.target.value) })}
-                  placeholder="Enter selling price"
-                />
-              </div>
-              <div className="form-group">
-                <label>Low Stock Threshold</label>
-                <input
-                  type="number"
-                  value={formData.lowStockThreshold}
-                  onChange={(e) => setFormData({ ...formData, lowStockThreshold: Number(e.target.value) })}
-                />
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Price *</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    required
+                    value={formData.price}
+                    onChange={(e) => setFormData({ ...formData, price: parseNumber(e.target.value) })}
+                    placeholder="Enter price"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Low Stock Threshold</label>
+                  <input
+                    type="number"
+                    value={formData.lowStockThreshold}
+                    onChange={(e) => setFormData({ ...formData, lowStockThreshold: Number(e.target.value) })}
+                  />
+                </div>
               </div>
               <div className="modal-actions">
                 <button type="button" className="btn-cancel" onClick={resetForm}>

@@ -7,11 +7,8 @@ const SaleSchema = new mongoose.Schema({
     sparse: true
   },
   products: [{
-    product: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Product',
-      required: true
-    },
+    product: String,
+    productId: String,
     name: String,
     sku: String,
     quantity: {
@@ -27,8 +24,7 @@ const SaleSchema = new mongoose.Schema({
     discount: {
       type: Number,
       default: 0,
-      min: 0,
-      max: 100
+      min: 0
     },
     tax: {
       type: Number,
@@ -46,17 +42,8 @@ const SaleSchema = new mongoose.Schema({
     name: String,
     email: String,
     phone: String,
-    address: {
-      street: String,
-      city: String,
-      state: String,
-      zipCode: String,
-      country: String
-    },
-    customerId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Customer'
-    }
+    address: String,
+    customerId: String
   },
   subtotal: {
     type: Number,
@@ -139,19 +126,15 @@ const SaleSchema = new mongoose.Schema({
     refundedAmount: Number,
     refundDate: Date,
     refundReason: String,
-    refundedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    }
+    refundedBy: String
   },
   createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    type: String,
+    required: true,
+    default: 'admin'
   },
   updatedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    type: String
   },
   saleDate: {
     type: Date,
