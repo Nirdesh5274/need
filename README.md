@@ -1,15 +1,46 @@
-# Factory Management System
+# Factory Management System 🏭
 
-A full-stack MERN (MongoDB, Express, React, Node.js) application for managing factory operations including inventory, sales, expenses, and reporting.
+A modern, secure factory management system built with MERN stack. Clean, simple, and production-ready!
 
-## Features
+## ✨ Features
 
-- 🔐 **Secure Authentication** - Owner-only login system
-- 📦 **Inventory Management** - Track products, stock levels, and low-stock alerts
-- 💰 **Sales Tracking** - Record sales transactions with detailed product information
-- 💳 **Expense Management** - Track all business expenses by category
-- 📊 **Reports & Analytics** - Visualize profit/loss, expenses by category, and inventory reports
-- 📱 **Responsive Design** - Works on desktop and mobile devices
+- 🔐 **Secure Authentication** - Single admin login with bcrypt & JWT
+- 📦 **Inventory Management** - Simple product tracking with low-stock alerts
+- 💰 **Sales Tracking** - Record sales with auto-invoice generation
+- 💳 **Expense Management** - Track expenses with auto-numbering
+- 📊 **Dashboard** - Real-time stats with beautiful glassmorphic design
+- 📱 **Responsive** - Works perfectly on all devices
+
+## 🚀 Quick Deploy to Vercel
+
+### One-Click Deploy (Recommended)
+
+1. **Fork this repository**
+2. **Go to [Vercel](https://vercel.com)** and import your fork
+3. **Deploy Backend:**
+   - Root Directory: `backend`
+   - Add Environment Variables:
+     ```
+     MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/factory
+     JWT_SECRET=your-random-secret-key-min-32-chars
+     ADMIN_PASSWORD_HASH=$2a$10$EScRNOfKNDaRzJ7.gzGOsewsTekkpJz2i6iqRZ.9Sz4vU0l/3VYlK
+     PORT=5000
+     ```
+   - Click Deploy
+
+4. **Deploy Frontend:**
+   - Root Directory: `frontend`
+   - Add Environment Variables:
+     ```
+     VITE_API_URL=https://your-backend-url.vercel.app/api
+     ```
+   - Click Deploy
+
+5. **Done!** 🎉
+
+### Login Credentials
+- Email: `admin@factory.com`
+- Password: `Admin@123!Factory`
 
 ## Tech Stack
 
