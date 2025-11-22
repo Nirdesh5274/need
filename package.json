@@ -10,7 +10,11 @@
     "dev-frontend": "cd frontend && npm run dev",
     "start-backend": "cd backend && npm start",
     "build-frontend": "cd frontend && npm run build",
+    "vercel-build": "npm run install-frontend && npm run build-frontend",
     "build": "npm run install-all && npm run build-frontend"
+  },
+  "engines": {
+    "node": "18.x"
   },
   "keywords": ["factory", "management", "inventory", "sales", "expenses", "mern"],
   "author": "",
