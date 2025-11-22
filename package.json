@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "description": "Full-stack MERN Factory Management System",
   "scripts": {
-    "install-backend": "cd backend && npm install",
+    "install-backend": "cd api && npm install",
     "install-frontend": "cd frontend && npm install",
     "install-all": "npm run install-backend && npm run install-frontend",
-    "dev-backend": "cd backend && npm run dev",
+    "dev-backend": "cd api && npm run dev",
     "dev-frontend": "cd frontend && npm run dev",
-    "start-backend": "cd backend && npm start",
+    "start-backend": "cd api && npm start",
     "build-frontend": "cd frontend && npm run build",
-    "vercel-build": "npm run install-frontend && npm run build-frontend",
+    "vercel-build": "cd api && npm ci && cd ../frontend && npm ci && npm run build",
     "build": "npm run install-all && npm run build-frontend"
   },
   "engines": {

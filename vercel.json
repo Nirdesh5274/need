@@ -1,6 +1,7 @@
 {
   "version": 2,
-  "installCommand": "cd api && npm ci",
+  "installCommand": "cd api && npm ci && cd ../frontend && npm ci",
+  "buildCommand": "cd frontend && npm run build",
   "builds": [
     {
       "src": "api/index.js",
