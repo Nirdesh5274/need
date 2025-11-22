@@ -1,0 +1,28 @@
+# Vercel Ignore File - Optimize serverless bundle size
+
+# Development files
+.git
+.gitignore
+*.md
+!README.md
+
+# Frontend source (only need built files)
+frontend/src
+frontend/node_modules
+frontend/.env*
+frontend/vite.config.js
+
+# API development files
+api/.env
+api/.env.example
+api/node_modules/.cache
+
+# Root development files
+node_modules
+
+# Documentation
+VERCEL_SETUP.md
+VERCEL_DEPLOYMENT_GUIDE.md
+
+# Scripts
+setup.ps1

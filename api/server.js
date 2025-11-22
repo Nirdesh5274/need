@@ -41,29 +41,25 @@ app.use('/api/', limiter);
 app.use(mongoSanitize());
 
 // CORS with flexible origin for Vercel
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://localhost:3001',
-  process.env.FRONTEND_URL,
-  'https://need-nirdesh5274s-projects.vercel.app',
-  'https://need.vercel.app',
-  'https://need-three.vercel.app'
-].filter(Boolean);
-
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, Postman, serverless, etc.)
+    // Allow requests with no origin (mobile apps, Postman, serverless functions, etc.)
     if (!origin) return callback(null, true);
     
-    // Allow any Vercel deployment URL or configured origins
-    if (origin.includes('.vercel.app') || allowedOrigins.some(allowed => origin.startsWith(allowed))) {
+    // In production, allow all Vercel deployment URLs
+    if (origin.includes('.vercel.app') || 
+        origin.includes('localhost') || 
+        (process.env.FRONTEND_URL && origin.startsWith(process.env.FRONTEND_URL))) {
       callback(null, true);
     } else {
-      callback(null, true); // Allow all in production to avoid CORS issues
+      // Allow all origins in production to prevent CORS issues
+      callback(null, true);
     }
   },
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 };
 app.use(cors(corsOptions));
 
@@ -140,13 +136,35 @@ app.use('/api/expenses', dbMiddleware, require('./routes/expenses'));
 app.use('/api/reports', dbMiddleware, require('./routes/reports'));
 app.use('/api/invoices', dbMiddleware, require('./routes/invoices'));
 
-// Export for Vercel serverless
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Server error:', err);
+  res.status(500).json({ 
+    message: 'Internal server error', 
+    error: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ message: 'Route not found' });
+});
+
+// Export app for serverless
 module.exports = app;
 
-// Local server
+// Local development server
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
+  connectDB()
+    .then(() => {
+      app.listen(PORT, () => {
+        console.log(`✅ Server running on port ${PORT}`);
+        console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+      });
+    })
+    .catch(err => {
+      console.error('❌ Failed to start server:', err);
+      process.exit(1);
+    });
 }
