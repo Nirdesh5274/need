@@ -8,13 +8,7 @@
     },
     {
       "src": "api/index.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": [
-          "backend/**",
-          "api/**"
-        ]
-      }
+      "use": "@vercel/node"
     }
   ],
   "routes": [

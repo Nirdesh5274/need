@@ -1,12 +1,8 @@
 // Vercel Serverless Function Entry Point
-// This file must be kept simple and lightweight
-
-// Load environment variables
 require('dotenv').config();
 
-// Import and export the Express app
-// The backend/server.js is already configured to export the app
-const app = require('../backend/server');
+// Import the Express app from same folder (moved from backend/)
+const app = require('./server');
 
 // Export for Vercel
 module.exports = app;
